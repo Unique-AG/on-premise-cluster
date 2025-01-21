@@ -6,7 +6,6 @@
   loop:
     - k3s
     - certmanager
-    - basic_auth
 
 - name: Role Validation
   ansible.builtin.import_tasks:

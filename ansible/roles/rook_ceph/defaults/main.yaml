@@ -30,6 +30,8 @@ rook_ceph_vars:
         subdomain: ceph-os
       metadataPool:
         size: 1
+      dataPool:
+        size: 1
     cephCluster:
       mon:
         count: 1

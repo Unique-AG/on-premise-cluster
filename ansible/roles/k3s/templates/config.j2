@@ -8,6 +8,14 @@ secrets-encryption: true
 disable:
   - traefik
   - local-storage
+{% if cluster.cilium.enabled | default(false) | bool %}
+  - servicelb
+{%- endif -%}
+{%- if cluster.cilium.enabled | default(false) | bool -%}
+disable-kube-proxy: true
+disable-network-policy: true
+flannel-backend: none
+{%- endif -%}
 {% endif %}
 {% if
   (ansible_host != k3s_server_default_host and k3s_service_type | lower == 'server') or
@@ -17,8 +25,17 @@ server: https://{{ k3s_server_default_host }}:{{ k3s_vars.server.api.port }}
 {% endif %}
 {% if k3s_service_type | lower == 'server' %}
 tls-san:
-  {{ k3s_vars.server.tls_san | to_nice_yaml | indent(2) }}
+  {{ k3s_vars.server.tls_san | unique | to_nice_yaml | indent(2) }}
 {%- endif %}
 {% if k3s_token | length > 0 %}
 token: {{ k3s_token }}
+{% endif %}
+node-ip: {{ external_ip }}
+bind-address: {{ external_ip }}
+node-label:
+  - "rack={{ cluster.rack }}"
+{% if labels is defined %}
+{% for label in labels %}
+  - "{{ label }}"
+{% endfor %}
 {% endif %}

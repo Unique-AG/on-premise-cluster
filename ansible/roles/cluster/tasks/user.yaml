@@ -10,8 +10,7 @@
   authorized_key:
     user: "{{ cluster_vars.management_user }}"
     state: present
-    key: "{{ item }}"
-  loop: "{{ cluster_vars.management_user_ssh_keys }}"
+    key: "{{ cluster_vars.management_user_ssh_key }}"
 
 - name: Allow management user to use sudo without password
   lineinfile:

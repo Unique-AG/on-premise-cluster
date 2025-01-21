@@ -1,0 +1,19 @@
+{% if cilium_vars.config.bgp.enabled %}
+bgpControlPlane:
+  enabled: true
+{% endif %}
+k8sServiceHost: {{ k3s_vars.cluster.service.host }}
+k8sServicePort: {{ k3s_vars.cluster.service.port }}
+kubeProxyReplacement: true
+operator:
+  replicas: 1
+hubble:
+  relay:
+    enabled: true
+  ui:
+    enabled: true
+    service:
+      annotations:
+        tailscale.com/expose: "true"
+        tailscale.com/hostname: "{{ cluster.name }}-hubble"
+        tailscale.com/tags: "tag:k8s,tag:{{ cluster.name }},{{ tailscale.tags.hubble }},{{ tailscale.tags.system }}"

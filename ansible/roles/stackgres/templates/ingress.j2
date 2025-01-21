@@ -4,7 +4,7 @@ metadata:
   name: {{ stackgres_vars.kubernetes.helm.chart.name }}-ingress
   namespace: {{ stackgres_vars.kubernetes.namespace }}
   annotations:
-    kubernetes.io/ingress.class: kong
+    kubernetes.io/ingress.class: {{ cluster.ingress_class }}
     cert-manager.io/cluster-issuer: letsencrypt-production
 spec:
   tls:

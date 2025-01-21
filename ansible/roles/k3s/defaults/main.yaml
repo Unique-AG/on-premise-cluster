@@ -12,6 +12,11 @@ k3s_vars:
     api:
       port: 6443
     tls_san:
-      - "{{ ansible_fqdn }}"
       - "{{ ansible_hostname }}"
-      - "{{ ansible_default_ipv4.address }}"
+      - "{{ inventory_hostname }}"
+      - "{{ internal_ip }}"
+      - "{{ external_ip }}"
+  cluster:
+    service:
+      host: "{{ external_ip }}"
+      port: 6443

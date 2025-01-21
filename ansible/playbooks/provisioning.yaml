@@ -9,14 +9,6 @@
     ansible_user: root
   tags: cluster
 
-- name: SSH Provisioning
-  hosts: cluster
-  become: true
-  gather_facts: false
-  roles:
-    - ssh
-  tags: ssh
-
 - name: Kubernetes Provisioning
   hosts: cluster
   become: true
@@ -29,6 +21,20 @@
   roles:
     - helm
     - k3s
+  serial:
+    - "{{ groups['server'] | length }}"
+    - "{{ groups['agent'] | length }}"
+  tags: kubernetes
+
+- name: Network Plugins Provisioning
+  hosts: cluster
+  become: true
+  gather_facts: true
+  roles:
+    - role: cilium
+      when: cluster.cilium.enabled | default(false) | bool
+    - role: tailscale
+      when: cluster.tailscale.enabled | default(false) | bool
   serial:
     - "{{ groups['server'] | length }}"
     - "{{ groups['agent'] | length }}"

@@ -1,0 +1,9 @@
+- name: Set project chart fact
+  ansible.builtin.set_fact:
+    tailscale_project_chart: '{{ tailscale_vars.kubernetes.helm.repository.org }}/{{ tailscale_vars.kubernetes.helm.chart.name }}'
+  run_once: true
+
+- name: Set variables fact
+  ansible.builtin.set_fact:
+    tailscale_vars: '{{ tailscale_vars }}'
+  run_once: true

@@ -8,18 +8,18 @@ cluster:
   # Our Kong gateway operator only allows a single gateway per cluster. All subdomains need to be configured here
   # so the certmanager can issue certificates for them.
   subdomains:
-    argocd: argocd
-    harbor: harbor
+    app: app
+    api: api
 
-  management_user_ssh_keys:
-    - "ssh-ed25519 <ssh-key> example-description"
+  management_user_ssh_key: "ssh-ed25519 <ssh-key> example-description"
+  storage_class: ceph-block
+  ingress_class: kong
 
 # The roles to install in the cluster.
 chart_roles:
+  - prometheus
   - certmanager
   - argocd
-  - basic_auth
-  - prometheus
   - reloader
   - external_secrets
   - rook_ceph
@@ -27,36 +27,56 @@ chart_roles:
   - stackgres
   - redis
   - rabbitmq
+  - tailscale
   - harbor
   - nvidia_gpu_operator
   - ray
-  - zitadel
+  - litellm
 
 versions:
   alloy: 0.10.1 # https://github.com/grafana/helm-charts/releases
-  argocd: v7.7.10 # https://github.com/argoproj/argo-helm/releases
-  certmanager: v1.16.2 # https://github.com/cert-manager/cert-manager/releases
-  external_secrets: 0.11.0 # https://github.com/external-secrets/external-secrets/releases
-  harbor: v1.16.0 # https://github.com/goharbor/harbor-helm/releases
-  kong_chart: 0.16.0 # https://github.com/Kong/charts/blob/main/charts/ingress/CHANGELOG.md
-  kong_controller: 3.8.0 # https://github.com/Kong/kong/blob/master/CHANGELOG.md
-  kong_ingress_controller: 3.3.1 # https://github.com/Kong/kubernetes-ingress-controller/releases
-  kube_prometheus_stack: v67.2.0 # https://github.com/prometheus-community/helm-charts/releases
-  kured: v5.5.2 # https://github.com/kubereboot/charts/releases
-  litellm: 0.1.553 # https://github.com/BerriAI/litellm/pkgs/container/litellm-helm
-  loki: 6.23.0 # https://github.com/grafana/helm-charts/releases
-  longhorn: v1.7.2 # https://github.com/longhorn/charts/releases
+  argocd: v7.7.16 # https://github.com/argoproj/argo-helm/releases
+  certmanager: v1.16.3 # https://github.com/cert-manager/cert-manager/releases
+  cilium_cli: v0.16.23 # https://github.com/cilium/cilium-cli/releases
+  cilium: v1.16.5 # https://github.com/cilium/cilium/releases
+  external_secrets: 0.13.0 # https://github.com/external-secrets/external-secrets/releases
+  harbor: v1.16.2 # https://github.com/goharbor/harbor-helm/releases
+  helm_diff: v3.9.14 # https://github.com/databus23/helm-diff/releases
+  kong_chart: 0.17.0 # https://github.com/Kong/charts/blob/main/charts/ingress/CHANGELOG.md
+  kong_controller: 3.9.0 # https://github.com/Kong/kong/blob/master/CHANGELOG.md
+  kong_ingress_controller: 3.4.1 # https://github.com/Kong/kubernetes-ingress-controller/releases
+  kong_plugins_chart: 1.0.2 # https://artifacthub.io/packages/helm/unique/kong-plugins?modal=changelog
+  kube_prometheus_stack: v68.3.0 # https://github.com/prometheus-community/helm-charts/releases
+  kured: v5.6.0 # https://github.com/kubereboot/charts/releases
+  litellm: 0.6.0 # Our OWN CHART! Update the chart with the latest version from https://github.com/BerriAI/litellm/releases
+  loki: 6.25.0 # https://github.com/grafana/helm-charts/releases
+  longhorn: v1.7.2 # https://github.com/longhorn/charts/releases 
   nvidia_gpu_operator: v24.9.1 # https://github.com/NVIDIA/gpu-operator/releases
   promtail: 6.16.6 # https://github.com/grafana/helm-charts/releases
-  rabbitmq_cluster_operator: 4.4.0 # https://github.com/bitnami/charts/blob/main/bitnami/rabbitmq-cluster-operator/CHANGELOG.md
+  rabbitmq_cluster_operator: 4.4.2 # https://github.com/bitnami/charts/blob/main/bitnami/rabbitmq-cluster-operator/CHANGELOG.md
   ray: v1.2.2 # https://github.com/ray-project/kuberay-helm/releases
-  redis: 20.6.0 # https://github.com/bitnami/charts/blob/main/bitnami/redis/CHANGELOG.md
-  reloader: 1.2.0 # https://github.com/stakater/Reloader/releases
-  rook_ceph: v1.15.6 # https://github.com/rook/rook/releases
-  stackgres: 1.14.1 # https://gitlab.com/ongresinc/stackgres/-/blob/main/CHANGELOG.md
-  teleport: v17.0.5 # https://github.com/gravitational/teleport/releases
-  zitadel_helm_chart: 8.8.0 # https://github.com/zitadel/zitadel-charts/releases
-  zitadel: v2.65.5 # https://github.com/zitadel/zitadel/releases
+  redis: 20.6.3 # https://github.com/bitnami/charts/blob/main/bitnami/redis/CHANGELOG.md
+  reloader: 1.2.1 # https://github.com/stakater/Reloader/releases
+  rook_ceph: v1.16.2 # https://github.com/rook/rook/releases
+  stackgres: 1.14.2 # https://gitlab.com/ongresinc/stackgres/-/blob/main/CHANGELOG.md
+  tailscale: 1.78.1 # https://github.com/tailscale/tailscale/releases
+  zitadel_helm_chart: 8.11.2 # https://github.com/zitadel/zitadel-charts/releases
+  zitadel: v2.68.0 # https://github.com/zitadel/zitadel/releases
+
+tailscale:
+  oauth_client_id: "{{ lookup('ansible.builtin.env', 'TAILSCALE_OAUTH_CLIENT_ID') }}"
+  oauth_client_secret: "{{ lookup('ansible.builtin.env', 'TAILSCALE_OAUTH_CLIENT_SECRET') }}"
+  tags:
+    # The app tag is used to identify Unique apps in Tailscale.
+    app: "tag:app"
+    # The system tag is used for third party services like the monitoring stack, but NOT if the service can expose sensitive data.
+    system: "tag:system"
+    # The data tag marks services that can expose sensitive data, like a direct database connection or AMQP management.
+    data: "tag:data"
+    # Each service exposed to the tailscale network also gets a named tag.
+    alertmanager: "tag:alertmanager"
+    prometheus: "tag:prometheus"
+    grafana: "tag:grafana"
 
 apps:
   - llm-cluster
@@ -72,13 +92,7 @@ argocd:
     admin:
       password: password (we suggest using Ansible Vault or 1Password lookups e.g. {{ lookup('community.general.onepassword', 'RAY_CLUSTER_ARGOCD_ADMIN_PASSWORD') }})
     user:
-      name: user
       password: password123!
-
-basic_auth:
-  user:
-    name: admin
-    password: password123!
 
 harbor:
   admin:
@@ -104,11 +118,19 @@ document_chat:
   chat:
     postgres:
       user: user
-      password: password
-      database: database
-
-zitadel:
-  smtp:
-    host: host
-    user: user
-    password: password
+      password: password123!
+    lxm_encryption_key: secret_key
+  app_repository:
+    encryption_key: secret_key
+  scope_management:
+    zitadel_pat: secret_key
+  ingestion:
+    encryption_key: secret_key
+  llm_proxy:
+    bedrock:
+      aws_access_key_id: access_key
+      aws_secret_access_key: secret_key
+      claude_sonnet:
+        aws_region_name: eu-central-1
+      cohere_embed_multilingual:
+        aws_region_name: eu-central-1

@@ -1,0 +1,23 @@
+---
+cilium_vars:
+  kubernetes:
+    helm:
+      chart:
+        name: cilium
+        version: "{{ versions.cilium }}"
+      repository:
+        name: cilium
+        org: cilium
+        url: https://helm.cilium.io
+    namespace: kube-system
+  release:
+    cli:
+      version: "{{ versions.cilium_cli }}"
+      file: "cilium-linux-amd64.tar.gz"
+      repository:
+        org: cilium
+        name: cilium-cli
+  config:
+    bgp:
+      enabled: true
+      peer_address: "{{ cluster.cilium.router.ip }}"

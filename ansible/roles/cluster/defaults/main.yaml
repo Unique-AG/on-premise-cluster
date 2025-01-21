@@ -2,4 +2,4 @@
 cluster_vars:
   ubuntu_version: "22.04"
   management_user: management
-  management_user_ssh_keys: "{{ cluster.management_user_ssh_keys }}"
+  management_user_ssh_key: "{{ cluster.management_user_ssh_key }}"

@@ -1,0 +1,25 @@
+---
+- name: Set map fact
+  ansible.builtin.set_fact:
+    cilium_map:
+      helm:
+        chart:
+          reference: '{{ cilium_vars.kubernetes.helm.repository.org }}/{{ cilium_vars.kubernetes.helm.chart.name }}'
+        repository:
+          name: '{{ cilium_vars.kubernetes.helm.repository.org }}/{{ cilium_vars.kubernetes.helm.repository.name }}'
+          url: '{{ cilium_vars.kubernetes.helm.repository.url }}'
+        timeout: 5m0s
+      release:
+        cli:
+          url: https://github.com/{{ cilium_vars.release.cli.repository.org }}/{{ cilium_vars.release.cli.repository.name }}/releases
+  run_once: true
+
+- name: Set project fact
+  ansible.builtin.set_fact:
+    cilium_project:
+      release:
+        cli:
+          url: '{{ cilium_map.release.cli.url }}/download/{{ cilium_vars.release.cli.version }}/{{ cilium_vars.release.cli.file }}'
+      tag: '{{ cilium_vars.kubernetes.helm.chart.version }}'
+      url: https://github.com/{{ cilium_map.helm.repository.name }}/releases/tag
+  run_once: true

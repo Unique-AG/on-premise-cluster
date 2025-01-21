@@ -63,6 +63,13 @@
     state: present
     reload: yes
 
+- name: Set fs.inotify.max_user_watches to 524288
+  ansible.builtin.sysctl:
+    name: fs.inotify.max_user_watches
+    value: 524288
+    state: present
+    reload: yes
+
 - name: Disable swap in /etc/fstab and turn it off
   block:
     - name: Comment out swap entries in /etc/fstab

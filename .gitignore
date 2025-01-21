@@ -1,3 +1,5 @@
 ansible/values.yaml
 ansible/inventories/ray_cluster/hosts.yaml
+ansible/.env.1password
+ansible/run.sh
 10-document-chat/mirror-images.schema.yaml

@@ -1,0 +1,19 @@
+---
+apiServerProxyConfig:
+  mode: "true"
+operatorConfig:
+  defaultTags:
+    - "tag:k8s-operator"
+  hostname: "{{ cluster.name }}"
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          preference:
+            matchExpressions:
+              - key: role
+                operator: In
+                values:
+                  - "apps"
+proxyConfig:
+  defaultTags: "tag:k8s,tag:{{ cluster.name }}"

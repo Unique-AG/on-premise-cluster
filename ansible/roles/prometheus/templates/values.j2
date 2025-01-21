@@ -17,18 +17,11 @@ alertmanager:
           resources:
             requests:
               storage: {{ prometheus_vars.kubernetes.alertmanager.storage }}
-  ingress:
-    enabled: true
-    ingressClassName: kong
+  service:
     annotations:
-      cert-manager.io/cluster-issuer: {{ certmanager_vars.kubernetes.tls.cluster_issuer.production.name }}
-      # konghq.com/plugins: "{{ basic_auth_vars.plugin.name }}"
-    hosts:
-      - {{ prometheus_vars.kubernetes.alertmanager.ingress.subdomain }}.{{ cluster.domain }}
-    tls:
-      - hosts:
-          - {{ prometheus_vars.kubernetes.alertmanager.ingress.subdomain }}.{{ cluster.domain }}
-        secretName: {{ prometheus_vars.kubernetes.alertmanager.ingress.tls.secret_name }}
+      tailscale.com/expose: "true"
+      tailscale.com/hostname: "{{ cluster.name }}-alertmanager"
+      tailscale.com/tags: "tag:k8s,tag:{{ cluster.name }},{{ tailscale.tags.alertmanager }},{{ tailscale.tags.system }}"
 grafana:
   grafana.ini:
     security:
@@ -38,17 +31,11 @@ grafana:
       org_role: Viewer
   adminUser: {{ prometheus_vars.kubernetes.grafana.admin.name }}
   adminPassword: {{ prometheus_vars.kubernetes.grafana.admin.password }}
-  ingress:
-    enabled: true
-    ingressClassName: kong
+  service:
     annotations:
-      cert-manager.io/cluster-issuer: {{ certmanager_vars.kubernetes.tls.cluster_issuer.production.name }}
-    hosts:
-      - {{ prometheus_vars.kubernetes.grafana.ingress.subdomain }}.{{ cluster.domain }}
-    tls:
-      - hosts:
-          - {{ prometheus_vars.kubernetes.grafana.ingress.subdomain }}.{{ cluster.domain }}
-        secretName: {{ prometheus_vars.kubernetes.grafana.ingress.tls.secret_name }}
+      tailscale.com/expose: "true"
+      tailscale.com/hostname: "{{ cluster.name }}-grafana"
+      tailscale.com/tags: "tag:k8s,tag:{{ cluster.name }},{{ tailscale.tags.grafana }},{{ tailscale.tags.system }}"
 kubeControllerManager:
   endpoints:
     {{ k3s_server_ips | to_nice_yaml | indent(4) }}
@@ -62,18 +49,11 @@ kubeScheduler:
   endpoints:
     {{ k3s_server_ips | to_nice_yaml | indent(4) }}
 prometheus:
-  ingress:
-    enabled: true
-    ingressClassName: kong
+  service:
     annotations:
-      cert-manager.io/cluster-issuer: {{ certmanager_vars.kubernetes.tls.cluster_issuer.production.name }}
-      # konghq.com/plugins: "{{ basic_auth_vars.plugin.name }}"
-    hosts:
-      - {{ prometheus_vars.kubernetes.prometheus.ingress.subdomain }}.{{ cluster.domain }}
-    tls:
-      - hosts:
-          - {{ prometheus_vars.kubernetes.prometheus.ingress.subdomain }}.{{ cluster.domain }}
-        secretName: {{ prometheus_vars.kubernetes.prometheus.ingress.tls.secret_name }}
+      tailscale.com/expose: "true"
+      tailscale.com/hostname: "{{ cluster.name }}-prometheus"
+      tailscale.com/tags: "tag:k8s,tag:{{ cluster.name }},{{ tailscale.tags.prometheus }},{{ tailscale.tags.system }}"
   prometheusSpec:
     enableAdminAPI: true
     replicaExternalLabelName: replica

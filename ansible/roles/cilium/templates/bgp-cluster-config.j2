@@ -1,0 +1,17 @@
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumBGPClusterConfig 
+metadata:
+  name: cilium-bgp
+spec:
+  nodeSelector:
+    matchLabels:
+      rack: {{ cluster.rack }}
+  bgpInstances:
+    - name: "instance-64512"
+      localASN: 64512
+      peers:
+        - name: "peer-64512-router"
+          peerASN: 64512
+          peerAddress: "{{ cilium_vars.config.bgp.peer_address }}"
+          peerConfigRef:
+            name: "cilium-peer"

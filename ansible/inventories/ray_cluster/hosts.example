@@ -1,11 +1,20 @@
 server:
   hosts:
     ray-test-cluster-1.example.com:
+      internal_ip: "10.0.0.1"
+      external_ip: "10.0.0.1"
+      public_ip: "10.0.0.1"
 
 agent:
   hosts:
     ray-test-cluster-2.example.com:
+      internal_ip: "10.0.0.2"
+      external_ip: "10.0.0.2"
+      public_ip: "10.0.0.2"
     ray-test-cluster-3.example.com:
+      internal_ip: "10.0.0.3"
+      external_ip: "10.0.0.3"
+      public_ip: "10.0.0.3"
 
 cluster:
   children:

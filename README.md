@@ -6,7 +6,7 @@ Unique Ray Cluster
 We use Ansible to prepare the cluster. 
 
 ### Pre-requisites
-- An existing `management_user_ssh_keys`-owner (which has been applied to the target) must add your public ssh key to the `cluster_vars.management_user_ssh_keys` list in their respective `ansible/values.yaml` and at least run the `ssh` role once.
+- You must have ssh access to the cluster.
 - Must have ansible and potentially 1password-cli installed on your machine.
 
 ### Playing Ansible

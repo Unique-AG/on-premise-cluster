@@ -1,0 +1,27 @@
+---
+- name: Set facts
+  ansible.builtin.import_tasks:
+    file: facts.yaml
+
+- name: Role Validation
+  run_once: true
+  block:
+    - name: Validate project url
+      ansible.builtin.uri:
+        url: '{{ cilium_project.url }}/{{ cilium_project.tag }}'
+        timeout: 5
+      run_once: true
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed
+
+    - name: Validate cli release file url
+      ansible.builtin.uri:
+        url: '{{ cilium_project.release.cli.url }}'
+        timeout: 5
+      run_once: true
+      register: result
+      delay: 1
+      retries: 3
+      until: result is not failed

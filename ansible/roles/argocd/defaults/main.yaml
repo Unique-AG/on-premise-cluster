@@ -90,5 +90,5 @@ argocd_vars:
           cpu: 1
           memory: 2Gi
       user:
-        name: "{{ argocd.server.user.name }}"
+        name: user
         password: "{{ argocd.server.user.password }}"

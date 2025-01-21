@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Show help text if --help flag is used
+if [ "$1" == "--help" ]; then
+    echo "Usage: $0 [tag] [additional_args...]"
+    echo "Options:"
+    echo "  --help     Show this help message"
+    echo "  tag        Optional: Ansible tag to run specific tasks"
+    echo "  args       Optional: Additional arguments to pass to ansible-playbook"
+    echo ""
+    echo "Examples:"
+    echo "  $0                    # Run all tasks"
+    echo "  $0 charts            # Run only tasks tagged with 'charts'"
+    echo "  $0 charts -vvv      # Run charts tasks with verbose output"
+    echo "  $0 \"\" -vvv         # Run all tasks with verbose output"
+    exit 0
+fi
+
+# Initialize variables
+TAG_ARGS=""
+EXTRA_ARGS=""
+
+# If a tag argument was provided, set up the tags parameter
+if [ $# -gt 0 ] && [ "$1" != "" ]; then
+    TAG_ARGS="--tags $1"
+    shift  # Remove the first argument
+fi
+
+# Collect any remaining arguments
+if [ $# -gt 0 ]; then
+    EXTRA_ARGS="$@"
+fi
+
+# Check if .env file exists
+if [ ! -f .env.1password ]; then
+    echo "Error: .env.1password file not found"
+    exit 1
+fi
+
+# Run the playbook with 1Password CLI and force color output
+op run --env-file="./.env.1password" --account=<your-1password-account> -- env ANSIBLE_FORCE_COLOR=true ansible-playbook playbooks/provisioning.yaml --extra-vars "@values.yaml" $TAG_ARGS $EXTRA_ARGS
