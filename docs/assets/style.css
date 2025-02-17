@@ -1,0 +1,16 @@
+:root {
+  --theme-color: #3eb2d2;
+  --theme-color-dark: #225168;
+
+  --text-color-base: #1f1f1f;
+  --text-color-secondary: #646473;
+  --text-color-tertiary: #81818e;
+}
+
+body {
+  color: var(--text-color-base);
+}
+
+.anchor span {
+  color: var(--text-color-base);
+}

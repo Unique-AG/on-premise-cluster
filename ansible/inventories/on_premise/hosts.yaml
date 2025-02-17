@@ -1,0 +1,25 @@
+server:
+  hosts:
+    ray-test-cluster-4.fsn1.hetzner.infra.unique.app:
+      internal_ip: "188.34.183.70"
+      external_ip: "188.34.183.70"
+      labels:
+        - "role=apps"
+
+agent:
+  hosts:
+    ray-test-cluster-2.fsn1.hetzner.infra.unique.app:
+      internal_ip: "148.251.82.244"
+      external_ip: "148.251.82.244"
+      labels:
+        - "role=llms"
+    ray-test-cluster-3.fsn1.hetzner.infra.unique.app:
+      internal_ip: "148.251.82.236"
+      external_ip: "148.251.82.236"
+      labels:
+        - "role=llms"
+
+cluster:
+  children:
+    server:
+    agent:
